@@ -19,8 +19,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="9jt-zk-Yo2">
-                                <rect key="frame" x="0.0" y="40" width="375" height="565.5"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="9jt-zk-Yo2">
+                                <rect key="frame" x="0.0" y="40" width="375" height="499.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Meal Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MSH-Gs-GFD">
                                         <rect key="frame" x="0.0" y="0.0" width="86.5" height="20.5"/>
@@ -51,8 +51,13 @@
                                             <outletCollection property="gestureRecognizers" destination="WDM-Vk-1FR" appends="YES" id="KwC-ZH-IIC"/>
                                         </connections>
                                     </imageView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ErE-wZ-XwL" customClass="RatingControl" customModule="Foodtracker" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="455.5" width="200" height="110"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ErE-wZ-XwL" customClass="RatingControl" customModule="Foodtracker" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="455.5" width="252" height="44"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="starCount">
+                                                <integer key="value" value="5"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                     </stackView>
                                 </subviews>
                                 <constraints>
