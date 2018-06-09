@@ -39,19 +39,19 @@ import UIKit
         }
     }
     private func setupButtons(){
-        // tải nút ảnh
-        let bundle = Bundle(for : type(of: self))
-        let filledStar = UIImage(named: "filledStar", in: bundle, compatibleWith: self.traitCollection)
-        let emptyStar = UIImage(named: "emptyStar", in: bundle, compatibleWith: self.traitCollection)
-        let highlightedStar = UIImage(named: "highlightedStar", in: bundle, compatibleWith: self.traitCollection)
-        
         for button in ratingButtons {
             removeArrangedSubview(button)
             button.removeFromSuperview()
         }
         ratingButtons.removeAll()
         
-        for _ in 0..<starCount {
+        // tải nút ảnh
+        let bundle = Bundle(for : type(of: self))
+        let filledStar = UIImage(named: "filledStar", in: bundle, compatibleWith: self.traitCollection)
+        let emptyStar = UIImage(named: "emptyStar", in: bundle, compatibleWith: self.traitCollection)
+        let highlightedStar = UIImage(named: "highlightedStar", in: bundle, compatibleWith: self.traitCollection)
+        
+        for index in 0..<starCount {
             let button = UIButton()
             // đặt hình ảnh nút
             button.setImage(emptyStar, for: .normal)
@@ -63,6 +63,9 @@ import UIKit
             //tạo contraint
             button.heightAnchor.constraint(equalToConstant: starSize.height).isActive = true
             button.widthAnchor.constraint(equalToConstant: starSize.width).isActive = true
+            
+            button.accessibilityLabel = "Set \(index + 1) star rating"
+            
             button.addTarget(self, action: #selector(RatingControl.ratingButtonTapped(button:)), for: .touchUpInside)
             addArrangedSubview(button)
             //thêm nút
@@ -86,6 +89,25 @@ import UIKit
     private func updateButtonSelectionSates(){
         for (index , button) in ratingButtons.enumerated(){
             button.isSelected = index < rating
+            // đặt chuỗi gợi ý cho ngôi sao hiện được chọn
+            let hinString: String?
+            if rating == index + 1{
+                hinString = "Tap to reset the rating to zero."
+            }else{
+                hinString = nil
+            }
+            // tính chuỗi giá trị
+            let valueString: String
+            switch (rating) {
+            case 0:
+                valueString = "No rating set."
+            case 1:
+                valueString = "1 star set."
+            default:
+                valueString = "\(rating) stars set."
+            }
+            button.accessibilityHint = hinString
+            button.accessibilityValue = valueString
         }
     }
     
