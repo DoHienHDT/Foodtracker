@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import os.log
 class MealTableViewController: UITableViewController {
     var meals = [Meal]()
     private func loadSampleMeals() {
@@ -27,8 +27,12 @@ class MealTableViewController: UITableViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-     
-         loadSampleMeals()
+        navigationItem.leftBarButtonItem = editButtonItem
+        if let savedMeals = loadMeals(){
+            meals += savedMeals
+        }else{
+             loadSampleMeals()
+        }
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -65,8 +69,22 @@ class MealTableViewController: UITableViewController {
         cell.ratingControl.rating = meal.rating
         return cell
     }
-    
-
+    @IBAction func unwindToMealList(sender: UIStoryboardSegue) {
+        if let sourceViewController = sender.source as? MealViewController, let meal = sourceViewController.meal {
+            if let selectedIndexPath = tableView.indexPathForSelectedRow{
+                meals[selectedIndexPath.row] = meal
+                tableView.reloadRows(at: [selectedIndexPath], with: .none)
+            }else{
+                // luu cac bua an
+                saveMeals()
+                let newIndexPath = IndexPath(row: meals.count, section: 0)
+                // Add a new meal.
+                meals.append(meal)
+                tableView.insertRows(at: [newIndexPath], with: .automatic)
+            }
+            
+        }
+    }
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -75,17 +93,19 @@ class MealTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
+            meals.remove(at: indexPath.row)
+            saveMeals()
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
+    
 
     /*
     // Override to support rearranging the table view.
@@ -102,14 +122,49 @@ class MealTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        super.prepare(for: segue, sender: sender)
+        switch (segue.identifier ?? "") {
+            
+        case "add":
+            os_log("Adding a new meal.", log: OSLog.default, type: .debug)
+        case "ShowDetail":
+            
+            guard let mealDetailViewController = segue.destination as? MealViewController else {
+                fatalError("Unexpected destination: \(segue.destination)")
+            }
+            
+            guard let selectedMealcell = sender as? MealTableViewCell else {
+                fatalError("Unexpected sender: \(sender)")
+            }
+            guard let indexPath = tableView.indexPath(for: selectedMealcell) else {
+                fatalError("The selected cell is not being display be the table")
+            }
+            
+            let selectedMeal = meals[indexPath.row]
+            mealDetailViewController.meal = selectedMeal
+            
+        default:
+            fatalError("Unexpected Secgue Identifier ; \(segue.identifier))")
+        }
     }
-    */
-
+    // lưu và tải danh sách bữa ăn
+    private func saveMeals(){
+        let isSuccesfulSave = NSKeyedArchiver.archiveRootObject(meals, toFile: Meal.ArchiveURL.path)
+        if isSuccesfulSave{
+            os_log("Meals successfully saved ", log: OSLog.default, type: .debug)
+        } else {
+            os_log("Failed to save meals...", log: OSLog.default, type: .error)
+        }
+    }
+    //Thao tác này ghi nhật ký một thông báo gỡ lỗi vào bảng điều khiển nếu lưu thành công và thông báo lỗi cho bảng điều khiển nếu lưu không thành công.
+    
+    //  thực hiện một phương pháp để tải bữa ăn.
+    private func loadMeals() -> [Meal]?{
+        return NSKeyedUnarchiver.unarchiveObject(withFile: Meal.ArchiveURL.path) as? [Meal]
+    }
 }
